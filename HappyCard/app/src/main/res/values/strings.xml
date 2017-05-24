@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">HappyCard</string>
+    <string name="rectangle_desc">A Rectangle</string>
+    <string name="text_desc">A Text</string>
+    <string name="text_content">Hello World</string>
+    <string name="text_input_placeholder">Hello World</string>
+    <string name="text_quantity_title">QUANTITY</string>
+    <string name="btn_quantity_add">+</string>
+    <string name="btn_quantity_sub">-</string>
+    <string name="btn_quantity_order">Order</string>
+</resources>
