@@ -4,7 +4,11 @@
     <string name="text_desc">A Text</string>
     <string name="text_content">Hello World</string>
     <string name="text_input_placeholder">Hello World</string>
-    <string name="text_quantity_title">QUANTITY</string>
+    <string name="text_coffee_store_title">STAR-FUCKS</string>
+    <string name="text_topping_title">TOPPINGS</string>
+    <string name="text_topping_option_a">STAR-FUCKS</string>
+    <string name="text_topping_option_b">STAR-FUCKS</string>
+    <string name="text_topping_option_c">STAR-FUCKS</string>
     <string name="btn_quantity_add">+</string>
     <string name="btn_quantity_sub">-</string>
     <string name="btn_quantity_order">Order</string>
