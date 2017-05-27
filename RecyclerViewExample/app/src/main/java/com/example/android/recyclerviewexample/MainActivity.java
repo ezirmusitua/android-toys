@@ -1,5 +1,6 @@
 package com.example.android.recyclerviewexample;
 
+import android.graphics.drawable.Drawable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -13,19 +14,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
-    private RecyclerView mRecyclerView;
     private List<String> mData;
-    private HomeAdapter mAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         initData();
-        this.mAdapter = new HomeAdapter();
-        this.mRecyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
-        this.mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        this.mRecyclerView.setAdapter(mAdapter);
+        RecyclerView mRecyclerView;
+        HomeAdapter mAdapter = new HomeAdapter();
+        mRecyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        mRecyclerView.setAdapter(mAdapter);
+        Drawable dividerDrawable = getApplicationContext().getDrawable(R.drawable.normal_divider);
+        mRecyclerView.addItemDecoration(new DividerItemDecoration(dividerDrawable));
     }
 
     protected void initData() {
@@ -55,7 +57,7 @@ public class MainActivity extends AppCompatActivity {
 
         class MyViewHolder extends ViewHolder {
             TextView tv;
-            public MyViewHolder(View view) {
+            private MyViewHolder(View view) {
                 super(view);
                 tv = (TextView) view.findViewById(R.id.id_num);
             }
