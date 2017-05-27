@@ -11,16 +11,16 @@ import android.util.AttributeSet;
 import android.view.View;
 
 
-public class DividerItemDecoration extends RecyclerView.ItemDecoration {
+public class LinearDivider extends RecyclerView.ItemDecoration {
     private Drawable mDivider;
 
-    public DividerItemDecoration(Context context, AttributeSet attrs) {
+    public LinearDivider(Context context, AttributeSet attrs) {
         final TypedArray a = context.obtainStyledAttributes(attrs, new int[]{android.R.attr.listDivider});
         mDivider = a.getDrawable(0);
         a.recycle();
     }
 
-    public DividerItemDecoration(Drawable divider) {
+    public LinearDivider(Drawable divider) {
         mDivider = divider;
     }
 
@@ -79,6 +79,6 @@ public class DividerItemDecoration extends RecyclerView.ItemDecoration {
             LinearLayoutManager layoutManager = (LinearLayoutManager) parent.getLayoutManager();
             return layoutManager.getOrientation();
         } else
-            throw new IllegalStateException("DividerItemDecoration can only be used with a LinearLayoutManager.");
+            throw new IllegalStateException("LinearDivider can only be used with a LinearLayoutManager.");
     }
 }

@@ -3,6 +3,7 @@ package com.example.android.recyclerviewexample;
 import android.graphics.drawable.Drawable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.RecyclerView.ViewHolder;
@@ -24,10 +25,14 @@ public class MainActivity extends AppCompatActivity {
         RecyclerView mRecyclerView;
         HomeAdapter mAdapter = new HomeAdapter();
         mRecyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        // using linear layout manager and divider
+//        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+//        Drawable dividerDrawable = getApplicationContext().getDrawable(R.drawable.normal_divider);
+//        mRecyclerView.addItemDecoration(new LinearDivider(dividerDrawable));
+        // using grid layout manager
+        mRecyclerView.setLayoutManager(new GridLayoutManager(this, 3));
+        mRecyclerView.addItemDecoration(new GridDivider(50));
         mRecyclerView.setAdapter(mAdapter);
-        Drawable dividerDrawable = getApplicationContext().getDrawable(R.drawable.normal_divider);
-        mRecyclerView.addItemDecoration(new DividerItemDecoration(dividerDrawable));
     }
 
     protected void initData() {
