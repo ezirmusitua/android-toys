@@ -6,6 +6,6 @@ import retrofit2.http.GET;
 import retrofit2.http.Path;
 
 public interface GitHubClient {
-    @GET("/users/ezirmusitua")
-    Call<GitHubUser> user();
+    @GET("/users/{username}")
+    Call<GitHubUser> user(@Path("username") String username);
 }
