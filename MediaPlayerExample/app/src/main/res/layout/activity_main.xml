@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.example.android.mediaplayerexample.MainActivity">
+    <LinearLayout
+        android:id="@+id/ll_progress_ctrl"
+        android:orientation="horizontal"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:layout_width="match_parent"
+        android:layout_height="64dp">
+        <Button
+            android:id="@+id/btn_back"
+            android:text="<"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:onClick="onClickProgressCtrl" />
+        <SeekBar
+            android:layout_weight="1"
+            android:id="@+id/seek_bar_audio"
+            android:layout_width="0dp"
+            android:layout_height="match_parent" />
+        <Button
+            android:id="@+id/btn_forward"
+            android:text=">"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:onClick="onClickProgressCtrl" />
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/ll_status_ctrl"
+        android:gravity="center_horizontal"
+        android:layout_below="@+id/ll_progress_ctrl"
+        android:layout_width="match_parent"
+        android:layout_height="48dp">
+        <Button
+            android:id="@+id/btn_start"
+            android:text="start"
+            android:layout_width="72dp"
+            android:layout_height="48dp"
+            android:onClick="onClickStatusCtrl" />
+        <Button
+            android:id="@+id/btn_pause"
+            android:text="pause"
+            android:layout_width="72dp"
+            android:layout_height="48dp"
+            android:onClick="onClickStatusCtrl" />
+        <Button
+            android:id="@+id/btn_stop"
+            android:text="stop"
+            android:layout_width="72dp"
+            android:layout_height="48dp"
+            android:onClick="onClickStatusCtrl" />
+    </LinearLayout>
+
+</RelativeLayout>
