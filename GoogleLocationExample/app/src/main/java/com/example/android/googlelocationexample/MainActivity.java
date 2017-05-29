@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
@@ -14,6 +15,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -23,11 +25,15 @@ import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.ActivityRecognition;
 import com.google.android.gms.location.DetectedActivity;
+import com.google.android.gms.location.Geofence;
+import com.google.android.gms.location.GeofencingRequest;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.model.LatLng;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 public class MainActivity extends AppCompatActivity implements
         ActivityCompat.OnRequestPermissionsResultCallback,
@@ -36,11 +42,11 @@ public class MainActivity extends AppCompatActivity implements
         GoogleApiClient.OnConnectionFailedListener,
         LocationListener {
     private final String LOG_TAG = "J_LOCATION_EXAMPLE";
+    private ArrayList<Geofence> geoFences;
     private TextView tvLocation;
     private TextView tvActivityRecognize;
     private GoogleApiClient locationApiClient;
     private GoogleApiClient activityRecognizeClient;
-    private LocationRequest ggLocationReq;
     private ActivityDetectionBroadcastReceiver broadcastReceiver;
 
     @Override
@@ -60,6 +66,9 @@ public class MainActivity extends AppCompatActivity implements
         this.tvLocation = (TextView) findViewById(R.id.text_location);
         this.tvActivityRecognize = (TextView) findViewById(R.id.text_activity_recognize);
         this.broadcastReceiver = new ActivityDetectionBroadcastReceiver();
+
+        this.geoFences = new ArrayList<>();
+        populateGeoFences();
     }
 
     @Override
@@ -71,12 +80,10 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     protected void onStart() {
         super.onStart();
-        Boolean noPermission = ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED;
-        Toast.makeText(this, "HHHHHH", Toast.LENGTH_SHORT).show();
+        Boolean noPermission = ContextCompat.checkSelfPermission(this,
+                android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED;
         if (noPermission) {
-            String[] needPermissions = {
-                    android.Manifest.permission.ACCESS_FINE_LOCATION
-            };
+            String[] needPermissions = { android.Manifest.permission.ACCESS_FINE_LOCATION };
             ActivityCompat.requestPermissions(this, needPermissions, 0);
         } else {
             this.locationApiClient.connect();
@@ -104,8 +111,16 @@ public class MainActivity extends AppCompatActivity implements
         super.onResume();
     }
 
+    @Override
     public void onResult(Status status) {
         // do nothing
+        if (status.isSuccess()) {
+            Toast.makeText(this, "Geo fences Added", Toast.LENGTH_SHORT).show();
+        } else {
+            // Get the status code for the error and log it using a user-friendly message.
+            String errorMessage = GeofenceErrorMessages.getErrorMessage(status.getStatusCode());
+            Toast.makeText(this, errorMessage, Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override
@@ -120,11 +135,13 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void onConnected(Bundle bundle) {
-        this.ggLocationReq = LocationRequest.create();
-        this.ggLocationReq.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-        this.ggLocationReq.setInterval(1000);
-        LocationServices.FusedLocationApi.requestLocationUpdates(this.locationApiClient,
-                this.ggLocationReq, this);
+        LocationRequest ggLocationReq = LocationRequest.create();
+        ggLocationReq.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        ggLocationReq.setInterval(1000);
+        if (this.locationApiClient.isConnected()) {
+            LocationServices.FusedLocationApi.requestLocationUpdates(this.locationApiClient,
+                    ggLocationReq, this);
+        }
     }
 
     @Override
@@ -148,9 +165,53 @@ public class MainActivity extends AppCompatActivity implements
                 .setResultCallback(this);
     }
 
+    public void addGeoFence(View view) {
+        if (!this.locationApiClient.isConnected()) {
+            Toast.makeText(this, "Google location api not connected", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        try {
+            LocationServices.GeofencingApi.addGeofences(
+                    this.locationApiClient,
+                    getGeoFencingRequest(),
+                    getGeoFencePendingIntent()
+            ).setResultCallback(this); // Result processed in onResult().
+        } catch (SecurityException securityException) {
+            Log.d(this.LOG_TAG, securityException.toString());
+        }
+    }
+
     private PendingIntent getActivityDetectionPendingIntent() {
-        Intent intent = new Intent(this, DetectedAcitvityIntentService.class);
+        Intent intent = new Intent(this, DetectedActivityIntentService.class);
         return PendingIntent.getService(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+    }
+
+    private PendingIntent getGeoFencePendingIntent() {
+        Intent intent = new Intent(this, GeoFenceTransitionIntentService.class);
+        return PendingIntent.getService(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+    }
+
+    private void populateGeoFences() {
+        for (Map.Entry<String, LatLng> entry : Constants.BAY_AREA_LANDMARKS.entrySet()) {
+            this.geoFences.add(new Geofence.Builder()
+                    .setRequestId(entry.getKey())
+                    .setCircularRegion(
+                            entry.getValue().latitude,
+                            entry.getValue().longitude,
+                            Constants.GEO_FENCE_RADIUS_IN_METERS
+                    )
+                    .setExpirationDuration(Constants.GEO_FENCE_EXPIRATION_IN_MILLISECONDS)
+                    .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER |
+                            Geofence.GEOFENCE_TRANSITION_EXIT)
+                    .build());
+        }
+    }
+
+    private GeofencingRequest getGeoFencingRequest() {
+        GeofencingRequest.Builder builder = new GeofencingRequest.Builder();
+        builder.setInitialTrigger(GeofencingRequest.INITIAL_TRIGGER_ENTER);
+        builder.addGeofences(this.geoFences);
+        return builder.build();
     }
 
     private class ActivityDetectionBroadcastReceiver extends BroadcastReceiver {

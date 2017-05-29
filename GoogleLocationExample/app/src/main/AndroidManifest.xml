@@ -18,7 +18,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <service android:name=".DetectedAcitvityIntentService" android:exported="false">
+        <service android:name=".DetectedActivityIntentService" android:exported="false">
+        </service>
+        <service android:name=".GeoFenceTransitionIntentService" android:exported="false">
         </service>
     </application>
     <uses-permission android:name="com.google.android.gms.permission.ACTIVITY_RECOGNITION">

@@ -14,10 +14,10 @@ import java.util.ArrayList;
  * Created by jferroal on 2017-05-29.
  */
 
-public class DetectedAcitvityIntentService extends IntentService{
+public class DetectedActivityIntentService extends IntentService{
     protected static final String TAG = "J_ACTIVITY_REC";
 
-    public DetectedAcitvityIntentService() {
+    public DetectedActivityIntentService() {
         super(TAG);
     }
     @Override
