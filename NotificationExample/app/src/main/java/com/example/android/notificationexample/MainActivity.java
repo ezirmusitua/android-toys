@@ -63,7 +63,7 @@ public class MainActivity extends AppCompatActivity {
             stackBuilder.addParentStack(NotificationActivity.class);
 
             /* Adds the Intent that starts the Activity to the top of the stack */
-            stackBuilder.addNextIntentc(notificationIntent);
+            stackBuilder.addNextIntent(notificationIntent);
             PendingIntent contentIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
             builder.setContentIntent(contentIntent);
         } else {
